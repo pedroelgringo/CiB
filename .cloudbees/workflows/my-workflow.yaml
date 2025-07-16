@@ -1,12 +1,10 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
 name: My workflow
-
 on:
   push:
     branches:
-      - '**'
-
+      - "**"
 jobs:
   build:
     steps:
@@ -15,3 +13,17 @@ jobs:
         shell: sh
         run: |
           echo "hello world"
+    needs:
+      - Build
+  Build:
+    environment: FF2
+    steps:
+      - name: Build
+        kind: build
+        uses: cloudbees-io/register-build-artifact@v1
+        with:
+          version: "1"
+          url: https://test
+          name: Build 1
+      - name: Deploy
+        uses: cloudbees-io/kustomize-deploy@v1
